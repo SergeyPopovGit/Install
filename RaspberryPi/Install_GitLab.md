@@ -35,8 +35,6 @@ sudo reboot
 # check hostname
 hostname
 
-
-
 ##################  mount USB Stick (RECOMMENDED STEP) ##################
 
 # creates a directory for the USB Stick
@@ -64,6 +62,36 @@ sudo nano /etc/fstab
 	UUID=a322538a-2390-4d4f-b13a-7f057b4f2117  /media/usbstick  ext4  defaults  0  0
 
 
+##################  mount HDD Drive (RECOMMENDED STEP) ##################
+
+# creates a directory for the USB HDD Drive
+sudo mkdir /mnt/usbdrive
+
+
+# show devices
+sudo fdisk -l
+
+# unmount partition
+sudo umount /dev/sda1
+
+# format the usb stick in EXT4 
+sudo mkfs.ext4 /dev/sda1 -L GitLab
+
+# mount the USB stick
+sudo mount /dev/sda1 /mnt/usbdrive
+
+# change owner
+sudo chown pi /mnt/usbdrive
+
+
+# get the USB stick UUID (Universally Unique Identifier)
+sudo blkid
+
+# edit fstab
+sudo nano /etc/fstab
+
+	# add automount USB HDD on startup 
+	UUID=607fefd5-e7b3-43c5-8450-08cc4ae5933b  /mnt/usbdrive ext4 defaults  0  0
 
 ################## increase STACK size (RECOMMENDED STEP) ##################
 
@@ -83,11 +111,11 @@ free -m
 
 ################## install GitLab (NECESSARY STEP) ##################
 
-# download the latest package of GitLab CE from https://packages.gitlab.com/gitlab/raspberry-pi2
-curl -Lo gitlab-ce_12.6.2-ce.0_armhf.deb https://packages.gitlab.com/gitlab/raspberry-pi2/packages/raspbian/stretch/gitlab-ce_12.6.2-ce.0_armhf.deb/download.deb
+# install repository of GitLab
+curl -s https://packages.gitlab.com/install/repositories/gitlab/raspberry-pi2/script.deb.sh | sudo bash
 
-# install the downloaded package
-sudo apt install ./gitlab-ce_12.6.2-ce.0_armhf.deb
+# install the package
+sudo apt-get install gitlab-ce=14.0.0-ce.0
 
 # modify gitlab.rb configuration
 sudo nano /etc/gitlab/gitlab.rb
